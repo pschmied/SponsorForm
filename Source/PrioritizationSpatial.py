@@ -65,6 +65,8 @@ def multiAndSect(cur, projects, *layers):
 def processSpatial():
     # DB Connection
     conn = db.connect('Prioritization.sqlite')
+
+
     # creating a Cursor
     cur = conn.cursor()
 
@@ -191,8 +193,8 @@ def processSpatial():
 
 
 def main():
-    results = processSpatial()
-
+    #results = processSpatial()
+    pass
 
 if __name__ == "__main__":
      main()
