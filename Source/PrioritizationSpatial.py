@@ -6,6 +6,7 @@ import time
 # Buffer the projects two ways: 1/4mi and 10ft. We do this to save time later on our intersects.
 # Note that with PostGIS, this buffering step is silly because the search radius function DWithin() automatically
 # uses the spatial indexing.
+
 def buffproj10(cur):
     cur.execute("""CREATE TABLE proj10 AS
                    SELECT intprojid, CastToMulti(ST_Buffer(p.GEOMETRY, 10)) AS GEOMETRY
@@ -64,7 +65,7 @@ def multiAndSect(cur, projects, *layers):
 
 def processSpatial():
     # DB Connection
-    conn = db.connect('Prioritization.sqlite')
+    conn = db.connect('C:/Temp/Prioritization/Prior.sqlite')
 
 
     # creating a Cursor
@@ -147,7 +148,7 @@ def processSpatial():
 
     # 101 - Project is in a critical area
     print("Processing 101")
-    results['q101'] = notProj(cur, multiOrSect(cur, "proj10", "caoall_dissolve"))
+    results['q101'] = notProj(cur, multiOrSect(cur, "proj10", "caoall"))
 
     # 122 - Project is within identified resource lands
     results['q122'] = multiOrSect(cur, "proj10", "reszone08_region")
@@ -190,6 +191,18 @@ def processSpatial():
     results['q75'] = multiOrSect(cur, "proj10", "chokepoints_and_bottlenecks", "congested_transit_corridors", "its_key_arterial_corridors")
 
     return(results)
+
+def uniqueProjectID():
+    # DB Connection
+    conn = db.connect('C:/Temp/Prioritization/Prior.sqlite')
+    # creating a Cursor
+    cur = conn.cursor()
+    res = cur.execute("""SELECT DISTINCT intprojid FROM mtp_projects_dissolve""")
+    allproj = []
+    for x in res:
+       allproj += x
+    conn.close()
+    return allproj
 
 
 def main():
