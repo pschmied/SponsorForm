@@ -1,0 +1,21 @@
+Notes for populating a Spatialite database from an ESRI file geodatabase (.gdb directory)
+
+This method assumes Windows and involves an intermediate translation step to an ESRI personal geodb (.mdb file). A cleaner method would be to compile GDAL with ESRI's FileGDB support built in (http://trac.osgeo.org/gdal/wiki/FileGDB). However, building anything on Windows can be a pain. Building GDAL .gdb support on OS X/Linux looks like a straightforward --configure option.
+
+Prerequisites (Windows):
+1. OSGeo4W install with most GDAL stuff installed
+2. File GeoDB populated with layers and sundry
+
+Process:
+1. Convert to personal geodb via ArcCatalog
+2. Convert to spatialite via ogr2ogr:
+C:\>ogr2ogr -a_srs EPSG:2285 -f SQLite -dsco SPATIALITE=yes -gt 65536 C:\Users\PeterS\Dropbox\PSRC\T2040Priortization\SponsorForm\Prioritization.sqlite C:\Users\PeterS\Dropbox\PSRC\T2040Priortization\SponsorForm\Prioritization.mdb
+
+
+Prerequisites (Mac OS X):
+1. Install ESRI FileGDB libs, link .dylib to .so
+2. Compile complete gdal from homebrew
+
+Process:
+1. Convert to spatialite via ogr2ogr:
+$ ogr2ogr -a_srs EPSG:2285 -f SQLite -dsco SPATIALITE=yes -gt 65536 Prioritization.sqlite Prioritization.gdb
