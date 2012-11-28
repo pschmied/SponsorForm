@@ -42,7 +42,7 @@ def updateDatabase():
         pkfile.close()
 
     
-    cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER=SQL2008\PSRCSQL;DATABASE=sponsorFormTest;UID=coe;PWD=Boarder2040')
+    cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER=SQL2008\PSRCSQL;DATABASE=shrp2c18final;UID=coe;PWD=Boarder2040')
     cursor = cnxn.cursor()
    
     #get a dictionary where key, value pair = mtpID, localID
@@ -64,23 +64,31 @@ def updateDatabase():
         noSet = set(projIDs)-yesSet
         #print yesSet
         #print noSet 
-    
+        rows = []
         for item in yesSet:
+           
             if item in localIDs:
                 localID = localIDs[item]
             #print "%s, %s, %s," % (yesID, localID, questionID)
-                cursor.execute("Update Responses set AnswerID = ?, Text = 'Yes' where ProjectID = ? and QuestionID = ?", yesID, localID, questionID)
-                cnxn.commit()
+                row = [yesID,'Yes', localID, questionID]
+                rows.append(row)
+                #cursor.execute("Update Responses set AnswerID = ?, Text = 'Yes' where ProjectID = ? and QuestionID = ?", yesID, localID, questionID)
+                #cnxn.commit()
             else: 
                 print item
         for item in noSet:
             if item in localIDs:
                 localID = localIDs[item]
+                row = [noID,'No', localID, questionID]
+                rows.append(row)
                 #print "%s, %s, %s," % (noID, localID, questionID)
-                cursor.execute("Update Responses set AnswerID = ?, Text = 'No' where ProjectID = ? and QuestionID = ?", noID, localID, questionID)
-                cnxn.commit()
+                #cursor.execute("Update Responses set AnswerID = ?, Text = 'No' where ProjectID = ? and QuestionID = ?", noID, localID, questionID)
+                #cnxn.commit()
             else: 
                 print item
+        print "%s, %s, %s," % (noID, localID, questionID)
+        cursor.executemany("Update Responses set AnswerID = ?, Text = ? where ProjectID = ? and QuestionID = ?", rows)
+        cnxn.commit()
     cnxn.close()
 updateDatabase()
 
